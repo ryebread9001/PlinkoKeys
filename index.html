@@ -11,7 +11,7 @@
   }
 
   p {
-     transition: opacity 0.4s ease-in-out;
+
      position: fixed;
      top: 50%;
      left: 50%;
@@ -20,12 +20,10 @@
      transform: translate3d(-50%, -50%, 0);
      white-space: nowrap;
 
-     padding: 0.6em 1em;
-     border-radius: 100vw;
+
      color: black;
-     background: rgba(white, 0.8);
-     backdrop-filter: blur(2vw) saturate(500%);
-     line-height: 1;
+     text-size: 50;
+     line-height: 10;
      text-decoration: underline;
    }
 
@@ -120,10 +118,10 @@
            <button id="b" class="keyboard-button">b</button>
            <button id="n" class="keyboard-button">n</button>
            <button id="m" class="keyboard-button">m</button>
-           <button id="enter" class="keyboard-button">Enter</button>
+           <button id="score" class="keyboard-button">0</button>
        </div>
    </div>
-
+   <p id="abecedario"></p>
 </body>
 <script src="sketch.js"></script>
 </html>

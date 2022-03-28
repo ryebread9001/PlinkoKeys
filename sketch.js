@@ -5,8 +5,11 @@ sample = sample.toLowerCase();
 console.log(sample);
 let myArray = sample.split(" ");
 
-
-
+currentAlphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+for(i=0;i<26;i++){
+  document.getElementById.innerHTML += currentAlphabet[i];
+  document.getElementById.innerHTML += "     "
+}
 
 var keyIm;
 var yHeight = 0;
@@ -58,10 +61,11 @@ document.onkeypress = function (e) {
 
 var Engine = Matter.Engine,
   World = Matter.World,
-  Bodies = Matter.Bodies;
-
+  Bodies = Matter.Bodies,
+  Events = Matter.Events;
 var engine;
 var world;
+var score = 0;
 var boxes = [];
 var plinkos = [];
 let cols = 25,
@@ -70,12 +74,12 @@ particleSize = 3,
 plinkoSize = 9;
 width = window.screen.width;
 const spacing = width / cols;
-
+engine = Engine.create();
 function setup() {
   canvas.width = window.screen.width;
   canvas.height = window.screen.height /2;
   createCanvas(canvas.width, canvas.height);
-  engine = Engine.create();
+
   world = engine.world;
 
   var options = {
@@ -85,7 +89,7 @@ function setup() {
   //ground = Bodies.rectangle(0, canvas.innerHeight,0,canvas.width);
   //var box1 = Bodies.rectangle(100,100,50,50, options);
   var ground = Bodies.rectangle(0, canvas.height / 2, canvas.width * 2, 100, {
-    isStatic: true
+    isStatic: true, label: 'match'
   });
 
   for (let j = 0; j < rows; j ++) {
@@ -95,31 +99,32 @@ function setup() {
           x += spacing / 2;
         }
         const y = spacing + j * spacing;
-        const p = new Plinko(x, y, plinkoSize);
+        const p = new Plinko(x, y, plinkoSize, random(80,175));
         plinkos.push(p);
       }
     }
 
     for (let j = 0; j < rows*2; j ++) {
-        for (let i = 0; i < cols/4; i ++) {
+        for (let i = 0; i < cols; i ++) {
           let x = i * spacing /2;
 
           const y = spacing + j*6 + canvas.height/4;
-          const p = new Plinko(x *2 + canvas.width/5, y + canvas.height/15, plinkoSize);
+          const p = new Plinko(x*2, y + canvas.height/15, plinkoSize, j*50);
           plinkos.push(p);
         }
       }
   World.add(world, ground);
 }
 
-function Plinko(x,y,r) {
+function Plinko(x,y,r, color) {
   const options = {
     isStatic : true,
     density : 1,
     restitution : 1,
-    friction : 0
+    friction : 0,
+
   }
-  this.color = random(80,175);
+  this.color = color;
   this.body = Bodies.circle(x,y,r, options);
   this.r = r;
   World.add(world, this.body);
@@ -140,7 +145,8 @@ Plinko.prototype.show = function() {
 function Box(x, y, w, h, keyImage) {
   var options = {
     friction: 0.3,
-    restitution: 0.6
+    restitution: 0.6,
+    label: 'match1'
   };
   this.body = Bodies.rectangle(x, y, w, h, options);
   this.w = w;
@@ -256,6 +262,9 @@ function draw() {
   Engine.update(engine);
   for (var i = 0; i < boxes.length; i++) {
     boxes[i].show();
+
+
+
   }
   for (let i = 0; i < plinkos.length; i++) {
     plinkos[i].show();
@@ -264,3 +273,23 @@ function draw() {
   fill(255);
   rectMode(CENTER);
 }
+
+
+function handleCollision(e) {
+  const { pairs } = e;
+  pairs.forEach(pair => {
+    const { label: labelA } = pair.bodyA;
+    const { label: labelB } = pair.bodyB;
+
+    if (labelA === labelB) {
+      //console.log("COLLISION");
+
+    }
+    if ((labelA.charAt(0) == labelB.charAt(0)) && (labelA == "match" || labelB == "match")){
+      console.log("COL");
+      score++;
+      document.getElementById("score").innerHTML = score;
+    }
+  });
+}
+Events.on(engine, 'collisionStart', handleCollision);
